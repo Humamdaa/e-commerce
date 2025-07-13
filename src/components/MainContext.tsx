@@ -1,4 +1,4 @@
-import { Tally3 } from 'lucide-react';
+import { Tally3, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useFilter } from './filters';
 import axios from 'axios';
@@ -19,8 +19,7 @@ const MainContext = () => {
     }`;
     if (keyword) {
       url = `https://dummyjson.com/products/search?q=${keyword}`;
-     }
-    
+    }
     axios
       .get(url)
       .then((response) => {
@@ -74,37 +73,82 @@ const MainContext = () => {
   };
 
   const filterProducts = getFiltersProducts();
-  console.log(filterProducts);
-  return (
-    <section className="xl:w-[55rem] lg:w-[55rem] sm:w-[40rem] xs:w-[20rem] p-5">
-      <div className="wb-5">
-        <div className="flex flex-col sm:flex-row justify-between items-center">
-          <div className="relative mb-5 mt-5">
-            <button className="border px-4 py-2 rounded-full flex items-cneter">
-              <Tally3 className="mr-2" />
+  const totalProducts = 100;
+  const totalPages = Math.ceil(totalProducts / itemsPerPage);
 
-              {filter === 'all'
-                ? 'Filter'
-                : filter.charAt(0).toLowerCase() + filter.slice(1)}
+  const handlePageChange = (page: number) => {
+    if (page > 0 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const getPageinationButtons = () => {
+    const buttons: number[] = [];
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage = Math.min(totalPages, currentPage + 2);
+
+    if (currentPage - 2 < 1) {
+      endPage = Math.min(totalPages, endPage + (2 - currentPage - 1));
+    }
+
+    if (currentPage + 2 > totalPages) {
+      startPage = Math.min(1, startPage - (2 - totalPages - currentPage));
+    }
+
+    for (let page = startPage; page <= endPage; page++) {
+      buttons.push(page);
+    }
+
+    return buttons;
+  };
+
+  return (
+    <section className="w-full max-w-6xl p-5 mx-auto">
+      <div className="mb-5">
+        <div className="flex flex-col sm:flex-row justify-between items-center">
+          <div className="relative mb-5 mt-5 w-full sm:w-auto">
+            <button
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className="border px-4 py-2 rounded-full flex items-center w-full sm:w-auto justify-between"
+            >
+              <div className="flex items-center">
+                {dropdownOpen ? (
+                  <X className="mr-2 h-5 w-5" />
+                ) : (
+                  <Tally3 className="mr-2 h-5 w-5" />
+                )}
+                {filter === 'all'
+                  ? 'Filter'
+                  : filter.charAt(0).toUpperCase() + filter.slice(1)}
+              </div>
             </button>
 
             {dropdownOpen && (
-              <div className="absolute bg-white border border-gray-300 rounded mt-2 w-full sm:w-40">
+              <div className="absolute bg-white border border-gray-300 rounded mt-2 w-full sm:w-40 z-10">
                 <button
-                  onClick={() => setFilter('cheap')}
-                  className="black px-2 w-full text-left hober:bg-gray-200"
+                  onClick={() => {
+                    setFilter('cheap');
+                    setDropdownOpen(false);
+                  }}
+                  className="block px-4 py-2 w-full text-left hover:bg-gray-200"
                 >
                   Cheap
                 </button>
                 <button
-                  onClick={() => setFilter('expensive')}
-                  className="black px-2 w-full text-left hober:bg-gray-200"
+                  onClick={() => {
+                    setFilter('expensive');
+                    setDropdownOpen(false);
+                  }}
+                  className="block px-4 py-2 w-full text-left hover:bg-gray-200"
                 >
                   Expensive
                 </button>
                 <button
-                  onClick={() => setFilter('popular')}
-                  className="black px-2 w-full text-left hober:bg-gray-200"
+                  onClick={() => {
+                    setFilter('popular');
+                    setDropdownOpen(false);
+                  }}
+                  className="block px-4 py-2 w-full text-left hover:bg-gray-200"
                 >
                   Popular
                 </button>
@@ -113,10 +157,8 @@ const MainContext = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-4 sm:grid-cols-3 md:grid-cols-3 md:grid-cols-4 gap-5">
-          {/* Book card */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
           {filterProducts.map((product) => (
-            // Book card
             <BookCard
               key={product.id}
               id={product.id}
@@ -125,6 +167,38 @@ const MainContext = () => {
               price={product.price}
             />
           ))}
+        </div>
+
+        <div className="flex flex-col sm:flex-row justify-between items-center mt-5 gap-3">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="border px-4 py-2 rounded-full w-full sm:w-auto text-center"
+          >
+            Previous
+          </button>
+
+          <div className="flex flex-wrap justify-center gap-2">
+            {getPageinationButtons().map((page) => (
+              <button
+                key={page}
+                onClick={() => handlePageChange(page)}
+                className={`border px-4 py-2 rounded-full min-w-[40px] ${
+                  page === currentPage ? 'bg-black text-white' : ''
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="border px-4 py-2 rounded-full w-full sm:w-auto text-center"
+          >
+            Next
+          </button>
         </div>
       </div>
     </section>
