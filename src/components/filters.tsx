@@ -1,6 +1,5 @@
-import { UndoIcon } from 'lucide-react';
-import { createContext, useContext, useState, ReactNode } from 'react';
-
+import { createContext, useContext, useState } from 'react';
+import type { ReactNode } from 'react';
 interface FilterContextType {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
@@ -21,8 +20,8 @@ export const FilterProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [minPrice, setMinPrice] = useState<string | undefined>(undefined);
-  const [maxPrice, setMaxPrice] = useState<string | undefined>(undefined);
+  const [minPrice, setMinPrice] = useState<number | undefined>(undefined);
+  const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined);
   const [keyword, setKeyword] = useState<string>('');
 
   return (

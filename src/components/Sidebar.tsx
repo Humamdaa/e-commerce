@@ -1,8 +1,18 @@
-import { React, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFilter } from './filters';
 
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  rating: number;
+  images: string[];
+  category: string;
+}
+
 interface FetchResponse {
-  category: Product[];
+  products: Product[];
 }
 
 const Sidebar = () => {
@@ -39,24 +49,24 @@ const Sidebar = () => {
           new Set(data.products.map((product) => product.category))
         );
         setCategories(uniqueCategories);
-      } catch (error) {
+      } catch (error: unknown) {
         console.error(`error fetcheing categories : `, error.message);
       }
     };
     fetchCategories();
   }, []);
 
-  const handleMinPriceChange = (e: React.changeEvent<HTMLInputElement>) => {
+  const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setMinPrice(value ? parseFloat(value) : undefined);
   };
 
-  const handleMaxPriceChange = (e: React.changeEvent<HTMLInputElement>) => {
+  const handleMaxPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setMaxPrice(value ? parseFloat(value) : undefined);
   };
 
-  const handleRadioChageCategories = (category: string) => {
+  const handleRadioChangeCategories = (category: string) => {
     setSelectedCategory(category);
   };
 
@@ -109,7 +119,7 @@ const Sidebar = () => {
                 type="radio"
                 name="category"
                 value={category}
-                onChange={() => handleRadioChageCategories(category)}
+                onChange={() => handleRadioChangeCategories(category)}
                 className="mr-2 w-[16] h-[16px]"
                 checked={selectedCategory === category}
               />
