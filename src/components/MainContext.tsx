@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useFilter } from './filters';
 import axios from 'axios';
 import BookCard from './BookCard';
+import Sidebar from './Sidebar';
 
 const MainContext = () => {
   const { searchQuery, selectedCategory, minPrice, maxPrice, keyword } =
@@ -102,106 +103,118 @@ const MainContext = () => {
     return buttons;
   };
 
+  console.log(filterProducts);
   return (
-    <section className="w-full max-w-6xl p-5 mx-auto">
-      <div className="mb-5">
-        <div className="flex flex-col sm:flex-row justify-between items-center">
-          <div className="relative mb-5 mt-12 w-full sm:w-auto">
-            <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="border px-4 py-2 rounded-full flex items-center w-full sm:w-auto justify-between"
-            >
-              <div className="flex  items-center">
-                {dropdownOpen ? (
-                  <X className="mr-2 h-5 w-5" />
-                ) : (
-                  <Tally3 className="mr-2 h-5 w-5" />
+    <div className="flex h-screen">
+      {/* Sidebar - hidden on mobile when closed */}
+      <Sidebar />
+
+      {/* Main Content Area */}
+      <div className="flex-1 overflow-y-auto">
+        <section className="w-full max-w-6xl p-5 mx-auto">
+          {/* Filter Dropdown */}
+          <div className="mb-5">
+            <div className="flex flex-col sm:flex-row justify-between items-center">
+              <div className="relative mb-5 mt-12 w-full sm:w-auto">
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="border px-4 py-2 rounded-full flex items-center w-full sm:w-auto justify-between"
+                >
+                  <div className="flex items-center">
+                    {dropdownOpen ? (
+                      <X className="mr-2 h-5 w-5" />
+                    ) : (
+                      <Tally3 className="mr-2 h-5 w-5" />
+                    )}
+                    {filter === 'all'
+                      ? 'Filter'
+                      : filter.charAt(0).toUpperCase() + filter.slice(1)}
+                  </div>
+                </button>
+
+                {dropdownOpen && (
+                  <div className="absolute bg-white border border-gray-300 rounded mt-2 w-full sm:w-40 z-10">
+                    <button
+                      onClick={() => {
+                        setFilter('cheap');
+                        setDropdownOpen(false);
+                      }}
+                      className="block px-4 py-2 w-full text-left hover:bg-gray-200"
+                    >
+                      Cheap
+                    </button>
+                    <button
+                      onClick={() => {
+                        setFilter('expensive');
+                        setDropdownOpen(false);
+                      }}
+                      className="block px-4 py-2 w-full text-left hover:bg-gray-200"
+                    >
+                      Expensive
+                    </button>
+                    <button
+                      onClick={() => {
+                        setFilter('popular');
+                        setDropdownOpen(false);
+                      }}
+                      className="block px-4 py-2 w-full text-left hover:bg-gray-200"
+                    >
+                      Popular
+                    </button>
+                  </div>
                 )}
-                {filter === 'all'
-                  ? 'Filter'
-                  : filter.charAt(0).toUpperCase() + filter.slice(1)}
               </div>
-            </button>
+            </div>
 
-            {dropdownOpen && (
-              <div className="absolute bg-white border border-gray-300 rounded mt-2 w-full sm:w-40 z-10">
-                <button
-                  onClick={() => {
-                    setFilter('cheap');
-                    setDropdownOpen(false);
-                  }}
-                  className="block px-4 py-2 w-full text-left hover:bg-gray-200"
-                >
-                  Cheap
-                </button>
-                <button
-                  onClick={() => {
-                    setFilter('expensive');
-                    setDropdownOpen(false);
-                  }}
-                  className="block px-4 py-2 w-full text-left hover:bg-gray-200"
-                >
-                  Expensive
-                </button>
-                <button
-                  onClick={() => {
-                    setFilter('popular');
-                    setDropdownOpen(false);
-                  }}
-                  className="block px-4 py-2 w-full text-left hover:bg-gray-200"
-                >
-                  Popular
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+            {/* Product Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+              {filterProducts.map((product) => (
+                <BookCard
+                  key={product.id}
+                  id={product.id}
+                  title={product.title}
+                  image={product.thumbnail}
+                  price={product.price}
+                />
+              ))}
+            </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-          {filterProducts.map((product) => (
-            <BookCard
-              key={product.id}
-              id={product.id}
-              title={product.title}
-              image={product.thumbnail}
-              price={product.price}
-            />
-          ))}
-        </div>
-
-        <div className="flex flex-col sm:flex-row justify-between items-center mt-5 gap-3">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="border px-4 py-2 rounded-full w-full sm:w-auto text-center"
-          >
-            Previous
-          </button>
-
-          <div className="flex flex-wrap justify-center gap-2">
-            {getPageinationButtons().map((page) => (
+            {/* Pagination */}
+            <div className="flex flex-col sm:flex-row justify-between items-center mt-5 gap-3">
               <button
-                key={page}
-                onClick={() => handlePageChange(page)}
-                className={`border px-4 py-2 rounded-full min-w-[40px] ${
-                  page === currentPage ? 'bg-black text-white' : ''
-                }`}
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="border px-4 py-2 rounded-full w-full sm:w-auto text-center disabled:opacity-50"
               >
-                {page}
+                Previous
               </button>
-            ))}
-          </div>
 
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="border px-4 py-2 rounded-full w-full sm:w-auto text-center"
-          >
-            Next
-          </button>
-        </div>
+              <div className="flex flex-wrap justify-center gap-2">
+                {getPageinationButtons().map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`border px-4 py-2 rounded-full min-w-[40px] ${
+                      page === currentPage ? 'bg-black text-white' : ''
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="border px-4 py-2 rounded-full w-full sm:w-auto text-center disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </section>
       </div>
-    </section>
+    </div>
   );
 };
 
