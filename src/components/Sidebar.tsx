@@ -49,8 +49,15 @@ const Sidebar = () => {
           new Set(data.products.map((product) => product.category))
         );
         setCategories(uniqueCategories);
-      } catch (error: unknown) {
-        console.error(`error fetcheing categories : `, error.message);
+      } catch (error) {
+        console.error(
+          'Error fetching categories:',
+          error instanceof Error
+            ? error.message
+            : typeof error === 'string'
+            ? error
+            : 'Unknown error'
+        );
       }
     };
     fetchCategories();
