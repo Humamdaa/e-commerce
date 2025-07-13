@@ -106,12 +106,12 @@ const MainContext = () => {
     <section className="w-full max-w-6xl p-5 mx-auto">
       <div className="mb-5">
         <div className="flex flex-col sm:flex-row justify-between items-center">
-          <div className="relative mb-5 mt-5 w-full sm:w-auto">
+          <div className="relative mb-5 mt-12 w-full sm:w-auto">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="border px-4 py-2 rounded-full flex items-center w-full sm:w-auto justify-between"
             >
-              <div className="flex items-center">
+              <div className="flex  items-center">
                 {dropdownOpen ? (
                   <X className="mr-2 h-5 w-5" />
                 ) : (
