@@ -4,7 +4,6 @@ import { useFilter } from './filters';
 import axios from 'axios';
 import BookCard from './BookCard';
 import Sidebar from './Sidebar';
-import Skeleton from 'react-loading-skeleton';
 import SkeletonCard from './SkeletonCard';
 
 const MainContext = () => {
@@ -107,7 +106,7 @@ const MainContext = () => {
 
   console.log(filterProducts);
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen w-screen">
       {/* Sidebar - hidden on mobile when closed */}
       <Sidebar />
 
@@ -169,11 +168,11 @@ const MainContext = () => {
             </div>
 
             {/* Product Grid */}
-            {!filterProducts || filterProducts.length === 0 ? (
-              <SkeletonCard />
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-                {filterProducts.map((product) => (
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+              {!filterProducts || filterProducts.length === 0 ? (
+                <SkeletonCard count={8} />
+              ) : (
+                filterProducts.map((product) => (
                   <BookCard
                     key={product.id}
                     id={product.id}
@@ -181,10 +180,9 @@ const MainContext = () => {
                     image={product.thumbnail}
                     price={product.price}
                   />
-                ))}
-              </div>
-            )}
-
+                ))
+              )}
+            </div>
             {/* Pagination */}
             <div className="flex flex-col sm:flex-row justify-between items-center mt-5 gap-3">
               <button

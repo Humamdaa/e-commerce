@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useFilter } from './filters';
 import { Menu, X } from 'lucide-react';
+import CheckboxSkeleton from './SkeletonCategories';
+// import SkeletonCategories from './SkeletonCategories';
 
 interface Product {
   id: number;
@@ -85,6 +87,7 @@ const Sidebar = () => {
     setMaxPrice(undefined);
     setKeyword('');
   };
+  console.log('categories  : ', categories);
 
   return (
     <>
@@ -138,25 +141,31 @@ const Sidebar = () => {
         </div>
 
         {/* Categories */}
+
         <div className="mb-4">
           <h2 className="font-semibold mb-2">Categories</h2>
-          <div className="space-y-2">
-            {categories.map((category) => (
-              <label key={category} className="flex items-center">
-                <input
-                  type="radio"
-                  name="category"
-                  value={category}
-                  checked={selectedCategory === category}
-                  onChange={() => handleRadioChangeCategories(category)}
-                  className="mr-2"
-                />
-                {category.charAt(0).toUpperCase() + category.slice(1)}
-              </label>
-            ))}
-          </div>
+          {!categories || categories.length === 0 ? (
+            <>
+              <CheckboxSkeleton count={4} />
+            </>
+          ) : (
+            <div className="space-y-2">
+              {categories.map((category) => (
+                <label key={category} className="flex items-center">
+                  <input
+                    type="radio"
+                    name="category"
+                    value={category}
+                    checked={selectedCategory === category}
+                    onChange={() => handleRadioChangeCategories(category)}
+                    className="mr-2"
+                  />
+                  {category.charAt(0).toUpperCase() + category.slice(1)}
+                </label>
+              ))}
+            </div>
+          )}
         </div>
-
         {/* Keywords */}
         <div className="mb-6">
           <h2 className="font-semibold mb-2">Keywords</h2>
