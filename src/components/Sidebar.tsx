@@ -40,7 +40,7 @@ const Sidebar = () => {
     'trend',
     'shoes',
     'shirt',
-  ]);
+  ]); 
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -87,7 +87,6 @@ const Sidebar = () => {
     setMaxPrice(undefined);
     setKeyword('');
   };
-  console.log('categories  : ', categories);
 
   return (
     <>
@@ -141,7 +140,6 @@ const Sidebar = () => {
         </div>
 
         {/* Categories */}
-
         <div className="mb-4">
           <h2 className="font-semibold mb-2">Categories</h2>
           {!categories || categories.length === 0 ? (

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import SkeletonProductPage from './SkeletonProductPage';
 
 interface Product {
   id: number;
@@ -33,7 +34,11 @@ const ProductPage = () => {
   }, [id]);
 
   if (!product) {
-    return <h1>loading ...</h1>;
+    return (
+      <>
+        <SkeletonProductPage />;
+      </>
+    );
   }
 
   const handleNextImage = () => {
@@ -109,7 +114,7 @@ const ProductPage = () => {
             ))}
           </div>
         )}
-      </div>{' '}
+      </div>
       <h1 className="text-4xl mb-4 font-bold">{product.title}</h1>
       <p className="mb-4 text-2xl text-gray-700 w-[70%]">
         {product.description}
