@@ -1,45 +1,21 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import SkeletonProductPage from './SkeletonProductPage';
+import { useProductFetch } from '../hooks/useProductFetch';
 
-interface Product {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  rating: number;
-  images: string[];
-}
 
 const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [product, setProduct] = useState<Product | null>(null);
+  // const [product, setProduct] = useState<Product | null>(null);
+  // const [loading, setLoading] = useS;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  useEffect(() => {
-    if (id) {
-      axios
-        .get<Product>(`https://dummyjson.com/products/${id}`)
-        .then((response) => {
-          setProduct(response.data);
-          console.log('Product images count:', response.data.images.length);
-          console.log('product :', response.data.images);
-        })
-        .catch((error) => {
-          console.error('Error fetching product data:', error);
-        });
-    }
-  }, [id]);
+  const { product, loading, error } = useProductFetch(id);
 
-  if (!product) {
-    return (
-      <>
-        <SkeletonProductPage />;
-      </>
-    );
-  }
+  if (loading) return <SkeletonProductPage />;
+  if (error) return <div className="p-5 text-red-500">{error}</div>;
+  if (!product) return <div className="p-5">Product not found</div>;
 
   const handleNextImage = () => {
     setCurrentImageIndex((prev) =>

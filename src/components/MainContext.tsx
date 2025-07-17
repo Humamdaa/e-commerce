@@ -104,7 +104,6 @@ const MainContext = () => {
     return buttons;
   };
 
-  console.log(filterProducts);
   return (
     <div className="flex h-screen w-screen">
       {/* Sidebar - hidden on mobile when closed */}
@@ -210,7 +209,7 @@ const MainContext = () => {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="border px-4 py-2 rounded-full w-full sm:w-auto text-center disabled:opacity-50"
+                className="border px-4 py-2 sm:my-5 rounded-full w-full sm:w-auto text-center disabled:opacity-50"
               >
                 Next
               </button>
