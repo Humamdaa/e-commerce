@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export interface Product {
+ interface Product {
   id: number;
   title: string;
   description: string;

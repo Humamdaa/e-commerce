@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import SkeletonProductPage from './SkeletonProductPage';
-import { useProductFetch } from '../hooks/useProductFetch';
+import { useProductFetch } from '../hooks/useSpecificProductFetch';
 
 
 const ProductPage = () => {

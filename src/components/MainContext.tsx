@@ -1,47 +1,33 @@
 import { Tally3, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useFilter } from './filters';
-import axios from 'axios';
 import BookCard from './BookCard';
 import Sidebar from './Sidebar';
 import SkeletonCard from './SkeletonCard';
+import { useProductsFetch } from '../hooks/useProductsFetch';
 
 const MainContext = () => {
   const { searchQuery, selectedCategory, minPrice, maxPrice, keyword } =
     useFilter();
-  const [products, setProducts] = useState<any[]>([]);
   const [filter, setFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const { products, loading, error } = useProductsFetch({
+    keyword,
+    currentPage,
+  });
+
   const itemsPerPage = 12;
-
-  useEffect(() => {
-    let url = `https://dummyjson.com/products?limit=${itemsPerPage}&skip=${
-      (currentPage - 1) * itemsPerPage
-    }`;
-    if (keyword) {
-      url = `https://dummyjson.com/products/search?q=${keyword}`;
-    }
-    axios
-      .get(url)
-      .then((response) => {
-        setProducts(response.data.products);
-        console.log(response.data.products);
-      })
-      .catch((error) => {
-        console.error('Error fetching data ', error);
-      });
-  }, [currentPage, keyword]);
-
   const getFiltersProducts = () => {
-    let filterProducts = products;
+    let filterProducts = [...products];
 
+    // console.log('data ', filterProducts);
+    // console.log('loading ', loading);
     if (selectedCategory) {
       filterProducts = filterProducts.filter(
         (product) => product.category === selectedCategory
       );
-
-      console.log(filterProducts);
     }
     if (minPrice !== undefined) {
       filterProducts = filterProducts.filter(
@@ -167,23 +153,29 @@ const MainContext = () => {
             </div>
 
             {/* Product Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-              {!filterProducts || filterProducts.length === 0 ? (
+            {error ? (
+              <div className="text-center py-10 text-red-500">{error}</div>
+            ) : loading ? (
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                 <SkeletonCard count={8} />
-              ) : (
-                filterProducts.map((product) => (
+              </div>
+            ) : filterProducts.length === 0 ? (
+              <div className="text-center py-10">No products found</div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                {filterProducts.map((product) => (
                   <BookCard
                     key={product.id}
-                    id={product.id}
+                    id={product.id.toString()}
                     title={product.title}
                     image={product.thumbnail}
                     price={product.price}
                   />
-                ))
-              )}
-            </div>
+                ))}
+              </div>
+            )}
             {/* Pagination */}
-            <div className="flex flex-col sm:flex-row justify-between items-center mt-5 gap-3">
+            <div className="flex flex-col sm:flex-row justify-between items-center mt-5 gap-3 pb-10 sm:pb-0">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
@@ -192,7 +184,7 @@ const MainContext = () => {
                 Previous
               </button>
 
-              <div className="flex flex-wrap justify-center gap-2">
+              <div className="flex flex-wrap justify-center gap-2 mb-3 sm:mb-0">
                 {getPageinationButtons().map((page) => (
                   <button
                     key={page}
@@ -209,7 +201,7 @@ const MainContext = () => {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="border px-4 py-2 sm:my-5 rounded-full w-full sm:w-auto text-center disabled:opacity-50"
+                className="border px-4 py-2  rounded-full w-full sm:w-auto text-center disabled:opacity-50"
               >
                 Next
               </button>

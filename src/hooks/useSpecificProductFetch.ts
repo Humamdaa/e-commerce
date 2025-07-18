@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchProduct } from '../api/productApi';
+import { fetchProduct } from '../api/specificProductApi';
 
 interface Product {
   id: number;
